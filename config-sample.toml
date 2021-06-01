@@ -1,0 +1,11 @@
+[input]
+
+[input.files]
+comptes = "/path/to/file/Sigfaible_etablissement_utf8.csv"
+cotisations = "/path/to/file/Sigfaible_cotisdues.csv"
+debits = "/path/to/file/Sigfaible_debits.csv"
+delais = "/path/to/file/Sigfaible_delais.csv"
+
+[output]
+prefix = "gen-"
+size = 1000

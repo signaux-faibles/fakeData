@@ -108,13 +108,7 @@ func buildOrGetCoef(coef map[string]float64, value string) float64 {
 	var found bool
 
 	if c, found = coef[value]; !found {
-		r := rand.Float64()
-		plus := lib.RandBool()
-		if plus {
-			c = 1 + r
-		} else {
-			c = 1 - r
-		}
+		c = lib.RandCoeff(c)
 		coef[value] = c
 	}
 	return c

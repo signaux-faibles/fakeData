@@ -36,3 +36,8 @@ func RandCoeff(c float64) float64 {
 	}
 	return c
 }
+
+func RandItemFrom(datas []string) string {
+	i := rand.Int() % len(datas)
+	return datas[i]
+}

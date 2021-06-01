@@ -65,7 +65,7 @@ func main() {
 	} else {
 		log.Default().Println("OK -> ", outputCompte)
 	}
-	randomizers := map[string]randomizer{
+	var randomizers = map[string]randomizer{
 		//"diane":        readAndRandomDiane,
 		//"apartdemande": readAndRandomApartDemande,
 		//"apartconso":   readAndRandomApartConso,
@@ -77,10 +77,12 @@ func main() {
 		//"altares":      readAndRandomAltares,
 		"cotisations": urssaf.ReadAndRandomCotisations,
 		//"prediction":   readAndRandomPrediction,
-	}
-	//order := []string{"diane", "apartdemande", "apartconso", "bdf", "emploi", "delais", "sirene", "debits", "altares", "cotisations", "prediction"}
-	order := []string{"cotisations", "debits", "delais"}
-	for _, k := range order {
+		"ccsf": urssaf.ReadAndRandomCCSF,
+	} //order := []string{"diane", "apartdemande", "apartconso", "bdf", "emploi", "delais", "sirene", "debits", "altares", "cotisations", "prediction"}
+	order := []string{"cotisations", "debits", "delais", "ccsf"}
+
+	for info, k := range order {
+		log.Default().Println("info", info)
 		err := run(k, randomizers[k], mapping)
 		if err != nil {
 			panic(err)
@@ -91,6 +93,5 @@ func main() {
 func outputFileNamePrefixer(prefixOutput string, fileName string) string {
 	path := strings.Split(fileName, "/")
 	path[len(path)-1] = prefixOutput + path[len(path)-1]
-
 	return strings.Join(path, "/")
 }

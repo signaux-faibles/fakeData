@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"encoding/csv"
 	"github.com/pkg/errors"
-	"github.com/signaux-faibles/fakeData/lib"
+	"github.com/signaux-faibles/fakeData/common"
 	"io"
 	"log"
 	"math/rand"
@@ -78,7 +78,7 @@ func ReadAndRandomDelais(source string, outputFileName string, outputSize int, m
 			output[4] = "31/05/2021"
 			output[5] = "31/05/2021"
 			output[6] = row[6]
-			output[7] = lib.RandString(len(row[7]))
+			output[7] = common.RandRaisonSociale(row[7])
 			output[8] = row[8]
 			output[9] = row[9]
 			output[10], err = newMontant(row[10], c)
@@ -108,7 +108,7 @@ func buildOrGetCoef(coef map[string]float64, value string) float64 {
 	var found bool
 
 	if c, found = coef[value]; !found {
-		c = lib.RandCoeff(c)
+		c = common.RandCoeff()
 		coef[value] = c
 	}
 	return c

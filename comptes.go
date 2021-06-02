@@ -3,16 +3,15 @@ package main
 import (
 	"bufio"
 	"encoding/csv"
-	"github.com/signaux-faibles/fakeData/lib"
+	"github.com/signaux-faibles/fakeData/common"
 	"io"
 	"log"
-	"math/rand"
 	"os"
 )
 
 func ReadAndRandomComptes(source string, outputFileName string, outputSize int) (map[string]string, error) {
 	mapping := make(map[string]string)
-	sirens := make(map[string]string)
+	sirets := make(map[string]string)
 
 	// source
 	sourceFile, err := os.Open(source)
@@ -54,7 +53,7 @@ func ReadAndRandomComptes(source string, outputFileName string, outputSize int) 
 	}
 
 	wrote := 0
-	for wrote <= outputSize {
+	for wrote < outputSize {
 
 		row, err := reader.Read()
 
@@ -76,12 +75,12 @@ func ReadAndRandomComptes(source string, outputFileName string, outputSize int) 
 		}
 
 		var newSiren string
-		if _, ok := sirens[siren]; ok {
-			newSiren = sirens[siren]
+		if _, ok := sirets[siren]; ok {
+			newSiren = sirets[siren]
 		} else {
 			for {
-				newSiren = lib.RandStringBytesRmndr(9)
-				if _, ok := sirens[newSiren]; !ok && newSiren != siren {
+				newSiren = common.RandStringBytesRmndr(9)
+				if _, ok := sirets[newSiren]; !ok && newSiren != siren {
 					break
 				}
 			}
@@ -93,20 +92,20 @@ func ReadAndRandomComptes(source string, outputFileName string, outputSize int) 
 		var newSiret, newCompte string
 
 		for {
-			newSiret = newSiren + lib.RandStringBytesRmndr(5)
+			newSiret = newSiren + common.RandStringBytesRmndr(5)
 			if _, ok := mapping[newSiret]; !ok && newSiret != siret {
 				break
 			}
 		}
 		for {
-			newCompte = lib.RandStringBytesRmndr(len(compte))
+			newCompte = common.RandStringBytesRmndr(len(compte))
 			if _, ok := mapping[newCompte]; !ok && newCompte != compte {
 				break
 			}
 		}
 		mapping[compte] = newCompte
-		mapping[siret] = newSiret
-		sirens[siren] = newSiren
+		mapping[siren] = newSiren
+		sirets[siret] = newSiret
 
 		row[2] = newCompte
 		row[4] = newSiren
@@ -118,17 +117,9 @@ func ReadAndRandomComptes(source string, outputFileName string, outputSize int) 
 		}
 		if mod := wrote % (outputSize / 100); mod == 0 {
 			log.Default().Println("(comptes) wrote ", wrote/(outputSize/100), "%")
-			skipSomeComptes(reader)
+			common.SkipSomeLines(reader, 777)
 		}
 		wrote++
 	}
 	return mapping, nil
-}
-
-func skipSomeComptes(reader *csv.Reader) {
-	var skip = rand.Int() % 10 * 1033
-	for j := 0; j < skip; j++ {
-		_, _ = reader.Read()
-		continue
-	}
 }

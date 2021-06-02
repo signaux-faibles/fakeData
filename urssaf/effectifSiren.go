@@ -9,7 +9,7 @@ import (
 	"os"
 )
 
-func ReadAndRandomCCSF(source string, outputFileName string, outputSize int, mapping map[string]string) error {
+func ReadAndRandomEffectifSiren(source string, outputFileName string, outputSize int, mapping map[string]string) error {
 	// source
 	sourceFile, err := os.Open(source)
 	if err != nil {
@@ -46,9 +46,6 @@ func ReadAndRandomCCSF(source string, outputFileName string, outputSize int, map
 		return err
 	}
 
-	// map des coefficients générés
-	var dates []string
-
 	wrote := 0
 	for wrote <= outputSize {
 		row, err := reader.Read()
@@ -58,29 +55,37 @@ func ReadAndRandomCCSF(source string, outputFileName string, outputSize int, map
 		} else if err != nil {
 			return err
 		}
+		siret := row[0]
+		if k, ok := mapping[siret]; ok {
 
-		if k, ok := mapping[row[2]]; ok {
+			output := randomizeEffectifLine(k, row)
 
-			var output [6]string
-
-			output[0] = row[0]
-			output[1] = row[1]
-			output[2] = k
-			output[3] = common.RandItemFrom(dates)
-			output[4] = row[4]
-			output[5] = row[5]
-
-			err = writer.Write(output[0:6])
+			err = writer.Write(output[0:])
 			if err != nil {
 				return err
 			}
 			if outputSize > 100 {
 				if mod := wrote % (outputSize / 100); mod == 0 {
-					log.Default().Println("(ccsf) wrote ", wrote/(outputSize/100), "%")
+					log.Default().Println("(effectif) wrote ", wrote/(outputSize/100), "%")
+					common.SkipSomeLines(reader, 3.33)
 				}
 			}
 			wrote++
 		}
 	}
 	return nil
+}
+
+func randomizeEffectifLine(key string, input []string) []string {
+	var output []string
+	output = append(output, key)
+	for i, effectif := range input[:] {
+		if i == 0 {
+			continue
+		}
+		newEffectif, _ := common.RandEffectif(effectif)
+		output = append(output, newEffectif)
+	}
+	output[len(output)-1] = common.RandRaisonSociale(input[len(input)-1])
+	return output
 }

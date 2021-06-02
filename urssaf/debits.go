@@ -3,6 +3,7 @@ package urssaf
 import (
 	"bufio"
 	"encoding/csv"
+	"github.com/signaux-faibles/fakeData/common"
 	"io"
 	"log"
 	"math/rand"
@@ -97,18 +98,10 @@ func ReadAndRandomDebits(source string, outputFileName string, outputSize int, m
 		if outputSize > 100 {
 			if mod := wrote % (outputSize / 100); mod == 0 {
 				log.Default().Println("(debits) wrote ", wrote/(outputSize/100), "%")
-				skipSomeDebits(reader)
+				common.SkipSomeLines(reader, 9.37)
 			}
 		}
 		wrote++
 	}
 	return nil
-}
-
-func skipSomeDebits(reader *csv.Reader) {
-	var skip = rand.Int() % 10 * 10
-	for j := 0; j < skip; j++ {
-		_, _ = reader.Read()
-		continue
-	}
 }

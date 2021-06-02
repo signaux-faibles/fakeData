@@ -16,13 +16,9 @@ import (
 
 type randomizer func(string, string, int, map[string]string) error
 
-func contains(array []int, element int) bool {
-	for _, i := range array {
-		if i == element {
-			return true
-		}
-	}
-	return false
+func init() {
+	log.Default().Println("init randomization")
+	rand.Seed(time.Now().UTC().UnixNano())
 }
 
 // run execute une fonction de randomisation
@@ -42,7 +38,6 @@ func run(name string, handler randomizer, mapping map[string]string) error {
 }
 
 func main() {
-	rand.Seed(time.Now().UTC().UnixNano())
 	flag.Parse()
 
 	viper.SetConfigName("config")
@@ -58,6 +53,7 @@ func main() {
 	outputCompte := outputFileNamePrefixer(viper.GetString("output.prefix"), comptesFilename)
 	outputSize := viper.GetInt("output.size")
 	log.Default().Print("Fake comptes: ")
+	// mapping contains mapping about compte & siret
 	mapping, err := ReadAndRandomComptes(comptesFilename, outputCompte, outputSize*10)
 	if err != nil {
 		fmt.Println("Fail : " + err.Error())
@@ -66,20 +62,13 @@ func main() {
 		log.Default().Println("OK -> ", outputCompte)
 	}
 	var randomizers = map[string]randomizer{
-		//"diane":        readAndRandomDiane,
-		//"apartdemande": readAndRandomApartDemande,
-		//"apartconso":   readAndRandomApartConso,
-		//"bdf":          readAndRandomBDF,
-		//"emploi":       readAndRandomEmploi,
-		"delais": urssaf.ReadAndRandomDelais,
-		//"sirene":       readAndRandomSirene,
-		"debits": urssaf.ReadAndRandomDebits,
-		//"altares":      readAndRandomAltares,
-		"cotisations": urssaf.ReadAndRandomCotisations,
-		//"prediction":   readAndRandomPrediction,
-		"ccsf": urssaf.ReadAndRandomCCSF,
-	} //order := []string{"diane", "apartdemande", "apartconso", "bdf", "emploi", "delais", "sirene", "debits", "altares", "cotisations", "prediction"}
-	order := []string{"cotisations", "debits", "delais", "ccsf"}
+		"delais":        urssaf.ReadAndRandomDelais,
+		"debits":        urssaf.ReadAndRandomDebits,
+		"cotisations":   urssaf.ReadAndRandomCotisations,
+		"ccsf":          urssaf.ReadAndRandomCCSF,
+		"effectifSiren": urssaf.ReadAndRandomEffectifSiren,
+	}
+	order := []string{"cotisations", "debits", "delais", "ccsf", "effectifSiren"}
 
 	for info, k := range order {
 		log.Default().Println("info", info)

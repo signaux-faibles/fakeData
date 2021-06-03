@@ -7,11 +7,12 @@ import (
 	"io"
 	"log"
 	"os"
+	"strings"
 )
 
-func ReadAndRandomComptes(source string, outputFileName string, outputSize int) (map[string]string, error) {
+func ReadAndRandomEtablissements(source string, outputFileName string, outputSize int) (map[string]string, error) {
 	mapping := make(map[string]string)
-	sirets := make(map[string]string)
+	sirens := make(map[string]string)
 
 	// source
 	sourceFile, err := os.Open(source)
@@ -70,42 +71,53 @@ func ReadAndRandomComptes(source string, outputFileName string, outputSize int) 
 		}
 
 		siren := row[4]
-		if len(siren) != 9 {
+		siret := row[5]
+		if len(siren) < 4 || len(siret) < len(siren) {
 			continue
 		}
 
 		var newSiren string
-		if _, ok := sirets[siren]; ok {
-			newSiren = sirets[siren]
+		if _, ok := sirens[siren]; ok {
+			newSiren = sirens[siren]
 		} else {
 			for {
-				newSiren = common.RandStringBytesRmndr(9)
-				if _, ok := sirets[newSiren]; !ok && newSiren != siren {
+				newSiren, err = common.FalsifyNumber(siren)
+				if err != nil {
+					break
+				}
+				if _, ok := sirens[newSiren]; !ok && newSiren != siren {
 					break
 				}
 			}
 		}
 
-		siret := row[5]
-
 		compte := row[2]
 		var newSiret, newCompte string
 
 		for {
-			newSiret = newSiren + common.RandStringBytesRmndr(5)
+			suffix := strings.SplitAfter(siret, siren)[1]
+			newSuffix, err := common.FalsifyNumber(suffix)
+			if err != nil {
+				continue
+			}
+			newSiret = newSiren + newSuffix
 			if _, ok := mapping[newSiret]; !ok && newSiret != siret {
 				break
 			}
 		}
 		for {
-			newCompte = common.RandStringBytesRmndr(len(compte))
+			newCompte, err = common.FalsifyNumber(compte)
+			if err != nil {
+				break
+			}
 			if _, ok := mapping[newCompte]; !ok && newCompte != compte {
 				break
 			}
 		}
 		mapping[compte] = newCompte
+		mapping[siret] = newSiret
 		mapping[siren] = newSiren
-		sirets[siret] = newSiret
+		sirens[siren] = newSiren
 
 		row[2] = newCompte
 		row[4] = newSiren

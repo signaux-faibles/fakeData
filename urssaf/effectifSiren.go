@@ -55,8 +55,8 @@ func ReadAndRandomEffectifSiren(source string, outputFileName string, outputSize
 		} else if err != nil {
 			return err
 		}
-		siret := row[0]
-		if k, ok := mapping[siret]; ok {
+		siren := row[0]
+		if k, ok := mapping[siren]; ok {
 
 			output := randomizeEffectifLine(k, row)
 

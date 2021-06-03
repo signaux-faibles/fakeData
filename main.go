@@ -17,7 +17,7 @@ import (
 type randomizer func(string, string, int, map[string]string) error
 
 func init() {
-	log.Default().Println("init randomization")
+	log.Default().Println("init randoÎmization")
 	rand.Seed(time.Now().UTC().UnixNano())
 }
 
@@ -54,7 +54,7 @@ func main() {
 	outputSize := viper.GetInt("output.size")
 	log.Default().Print("Fake comptes: ")
 	// mapping contains mapping about compte & siret
-	mapping, err := ReadAndRandomComptes(comptesFilename, outputCompte, outputSize*10)
+	mapping, err := ReadAndRandomEtablissements(comptesFilename, outputCompte, outputSize*10)
 	if err != nil {
 		fmt.Println("Fail : " + err.Error())
 		fmt.Println("Interruption.")

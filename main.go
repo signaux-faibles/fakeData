@@ -67,8 +67,9 @@ func main() {
 		"cotisations":   urssaf.ReadAndRandomCotisations,
 		"ccsf":          urssaf.ReadAndRandomCCSF,
 		"effectifSiren": urssaf.ReadAndRandomEffectifSiren,
+		"effectifSiret": urssaf.ReadAndRandomEffectifSiret,
 	}
-	order := []string{"cotisations", "debits", "delais", "ccsf", "effectifSiren"}
+	order := []string{"cotisations", "debits", "delais", "ccsf", "effectifSiren", "effectifSiret"}
 
 	for info, k := range order {
 		log.Default().Println("info", info)

@@ -66,7 +66,7 @@ func ReadAndRandomEffectifSiren(source string, outputFileName string, outputSize
 			}
 			if outputSize > 100 {
 				if mod := wrote % (outputSize / 100); mod == 0 {
-					log.Default().Println("(effectif) wrote ", wrote/(outputSize/100), "%")
+					log.Default().Println("(effectif-siren) wrote ", wrote/(outputSize/100), "%")
 					common.SkipSomeLines(reader, 3.33)
 				}
 			}
@@ -86,6 +86,7 @@ func randomizeEffectifLine(key string, input []string) []string {
 		newEffectif, _ := common.RandEffectif(effectif)
 		output = append(output, newEffectif)
 	}
+	// randomize RAISON SOCIALE
 	output[len(output)-1] = common.RandRaisonSociale(input[len(input)-1])
 	return output
 }

@@ -104,7 +104,5 @@ func randomizeEffectifSiretLine(compte string, siret string, input []string) []s
 		}
 
 	}
-	//output[len(output)-2] = input[len(input)-2]
-	//output[len(output)-1] = input[len(input)-1]
 	return output
 }

@@ -17,3 +17,6 @@
 # Config files
 **/*.toml
 !config-sample.toml
+
+# GoLang files
+.idea

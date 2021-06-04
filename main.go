@@ -68,11 +68,11 @@ func main() {
 		"ccsf":          urssaf.ReadAndRandomCCSF,
 		"effectifSiren": urssaf.ReadAndRandomEffectifSiren,
 		"effectifSiret": urssaf.ReadAndRandomEffectifSiret,
+		"pcoll":         urssaf.ReadAndRandomPcoll,
 	}
-	order := []string{"cotisations", "debits", "delais", "ccsf", "effectifSiren", "effectifSiret"}
+	order := []string{"cotisations", "debits", "delais", "ccsf", "effectifSiren", "effectifSiret", "pcoll"}
 
-	for info, k := range order {
-		log.Default().Println("info", info)
+	for _, k := range order {
 		err := run(k, randomizers[k], mapping)
 		if err != nil {
 			panic(err)

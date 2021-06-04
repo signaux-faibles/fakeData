@@ -10,6 +10,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 )
 
 var onlyDigitCharacter *regexp.Regexp
@@ -34,20 +35,7 @@ func init() {
 
 func FalsifyNumber(input string) (string, error) {
 	length := len(input)
-	//if length < 9 {
-	//	return "", errors.New("input length is too short  (must be >= 9)")
-	//}
-	//value, err := strconv.Atoi(input)
-	//if err != nil {
-	//	log.Fatal("error when falsify ", input, ";", err)
-	//}
-	//falsified := int(float64(value) * coeff)
-	//if(fa)
-	//sprintf := fmt.Sprintf("%" + strconv.Itoa(length) + "v", falsified)
-	//return falsified[0:]
-
 	checksum := crc32.Checksum([]byte(input), crc32q)
-
 	sizedChecksum := fmt.Sprintf("%"+strconv.Itoa(length)+"v", checksum)
 	if len(sizedChecksum) > length {
 		result := sizedChecksum[0:length]
@@ -116,4 +104,14 @@ func RandItemFrom(datas []string) string {
 	}
 	log.Default().Println("can't get an item from empty arrays")
 	return ""
+}
+
+func RandDateAround(toChange time.Time) time.Time {
+	var today = time.Now()
+	var r = today
+	for r.After(today) || r.Equal(today) {
+		daysToChange := randomdata.Number(-19, 19)
+		r = toChange.AddDate(0, 0, daysToChange)
+	}
+	return r
 }

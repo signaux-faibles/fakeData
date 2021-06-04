@@ -3,6 +3,7 @@ package common
 import (
 	"github.com/golang-collections/collections/set"
 	"testing"
+	"time"
 )
 
 func Test_RandEffectif(t *testing.T) {
@@ -75,17 +76,27 @@ func Test_FalsifyNumber(t *testing.T) {
 		if result1 != result2 {
 			t.Errorf("when falsify '%s', results (here '%s' and '%s') should be equals", input, result1, result2)
 		}
-
-		//anotherInput := RandStringBytesRmndr(i%20)
-		//if anotherInput != input {
-		//	anotherResult, err = FalsifyNumber(anotherInput)
-		//	if err != nil {
-		//		t.Errorf("error when falsify '%s', error is '%s'", input, err)
-		//	}
-		//	if result1 == anotherResult {
-		//		t.Errorf("when falsify '%s' and '%s', results (here '%s') should be differents", input, anotherInput, anotherResult)
-		//	}
-		//}
 	}
+}
 
+func Test_RandDateAround(t *testing.T) {
+	now := time.Now()
+	type args struct {
+		input time.Time
+	}
+	tests := []struct {
+		name string
+		args args
+		want time.Time
+	}{
+		{"test now", args{now}, now},
+		{"test one year ago", args{now.AddDate(0, 0, -365)}, now},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := RandDateAround(tt.args.input); !got.Before(tt.want) {
+				t.Errorf("RandDateAround(%v) = %v, should be before %v", got, tt.want, now)
+			}
+		})
+	}
 }

@@ -17,7 +17,7 @@ import (
 type randomizer func(string, string, int, map[string]string) error
 
 func init() {
-	log.Default().Println("init randoÎmization")
+	log.Default().Println("init randomization")
 	rand.Seed(time.Now().UTC().UnixNano())
 }
 

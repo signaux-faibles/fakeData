@@ -1,7 +1,9 @@
 package common
 
 import (
+	"fmt"
 	"github.com/golang-collections/collections/set"
+	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
 )
@@ -50,7 +52,7 @@ func Test_FalsifyNumber(t *testing.T) {
 	var falsified = set.New()
 
 	for i := 0; i < 100000; i++ {
-		input := RandStringBytesRmndr(i%6 + 9)
+		input := RandStringBytesRmndr(10)
 		result1, err = FalsifyNumber(input)
 		if !generated.Has(input) {
 			generated.Insert(input)
@@ -90,13 +92,69 @@ func Test_RandDateAround(t *testing.T) {
 		want time.Time
 	}{
 		{"test now", args{now}, now},
-		{"test one year ago", args{now.AddDate(0, 0, -365)}, now},
+		{"test one day ago", args{now.AddDate(0, 0, -1)}, now},
+		{"test one month ago", args{now.AddDate(0, -1, 0)}, now},
+		{"test one year ago", args{now.AddDate(-1, 0, 0)}, now},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := RandDateAround(tt.args.input); !got.Before(tt.want) {
-				t.Errorf("RandDateAround(%v) = %v, should be before %v", got, tt.want, now)
+				t.Errorf("RandDateAround(%v) = %v, should be before %v", tt.args, got, tt.want)
 			}
 		})
+	}
+}
+
+func Test_RandDateAround_withClosure(t *testing.T) {
+	now := time.Now()
+	type args struct {
+		input time.Time
+	}
+	tests := []struct {
+		name string
+		args args
+		want time.Time
+	}{
+		{"test now", args{now}, now},
+		{"test one day ago", args{now.AddDate(0, 0, -1)}, now},
+		{"test one month ago", args{now.AddDate(0, -1, 0)}, now},
+		{"test one year ago", args{now.AddDate(-1, 0, 0)}, now},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := RandDateAround(tt.args.input)
+			assert.Condition(t,
+				func() bool {
+					return got.Before(tt.want)
+				},
+				fmt.Sprintf("Result -> %v, should be before %v", got, tt.want))
+		})
+	}
+}
+
+func Test_RandDateAroundAsString(t *testing.T) {
+	type args struct {
+		value  string
+		layout string
+	}
+	tests := []struct {
+		name string
+		args args
+	}{
+		{"pcoll format", args{"22MAR2021", "02Jan2006"}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result, err := RandDateAroundAsString(tt.args.layout, tt.args.value)
+			assert.Nil(t, err, "error when parsing %s with layout as %s", tt.args.value, tt.args.layout)
+			parsed, err := time.Parse(tt.args.layout, result)
+			assert.Nil(t, err, "error when parsing result %s with layout as %s", parsed, tt.args.layout)
+		})
+	}
+}
+
+func less(first time.Time, second time.Time) assert.Comparison {
+	return func() bool {
+		return first.Before(second)
 	}
 }

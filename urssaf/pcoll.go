@@ -8,7 +8,6 @@ import (
 	"log"
 	"os"
 	"strings"
-	"time"
 )
 
 var pcollDateFormat = "02Jan2006"
@@ -76,7 +75,7 @@ func ReadAndRandomPcoll(source string, outputFileName string, outputSize int, ma
 				}
 				if outputSize > 100 {
 					if mod := wrote % (outputSize / 100); mod == 0 {
-						log.Default().Println("(effectif-siret) wrote ", wrote/(outputSize/100), "%")
+						log.Default().Println("(pcoll) wrote ", wrote/(outputSize/100), "%")
 						common.SkipSomeLines(reader, 3.33)
 					}
 				}
@@ -95,20 +94,13 @@ func randomizePColl(siret string, siren string, input []string) []string {
 	output[0] = siret
 	output[1] = siren
 
-	var dateEffet = parseDateEffet(input[2])
-	//daysToChange := randomdata.Number(-35, 35)
-	dateEffet = common.RandDateAround(dateEffet)
-	output[2] = strings.ToUpper(dateEffet.Format(pcollDateFormat))
+	randomized, err := common.RandDateAroundAsString(pcollDateFormat, input[2])
+	if err != nil {
+		output[2] = input[2]
+	} else {
+		output[2] = strings.ToUpper(randomized)
+	}
 	output[3] = common.RandItemFrom(cat_v2)
 	output[4] = common.RandItemFrom(procedures)
 	return output[:]
-}
-
-func parseDateEffet(input string) time.Time {
-	parse, err := time.Parse(pcollDateFormat, input)
-	if err != nil {
-		log.Default().Println("can't parse date effet from", input, "with format", pcollDateFormat, ", error is", err)
-		return parse
-	}
-	return parse
 }

@@ -15,6 +15,8 @@ import (
 //Urssaf_gestion;Dep;Numero_compte_externe;Numero_structure;Date_creation;Date_echeance;Duree_delai;Denomination_premiere_ligne;Indic_6M;Annee_creation;Montant_global_echeancier;Code_externe_stade;Code_externe_action
 //311;31;090048281379700073;3110201303256;24/03/2021;28/09/2021;188;OCCITANIA;SUP;2021;5697.00;APPROB;SUR PO
 
+var delaiDateFormat = "02/01/2006"
+
 func ReadAndRandomDelais(source string, outputFileName string, outputSize int, mapping map[string]string) error {
 	// source
 	sourceFile, err := os.Open(source)
@@ -75,8 +77,18 @@ func ReadAndRandomDelais(source string, outputFileName string, outputSize int, m
 			output[1] = row[1]
 			output[2] = k
 			output[3] = "aSiren-" + strconv.Itoa(rand.Int())
-			output[4] = "31/05/2021"
-			output[5] = "31/05/2021"
+			randomized, err := common.RandDateAroundAsString(delaiDateFormat, row[4])
+			if err != nil {
+				output[4] = row[4]
+			} else {
+				output[4] = randomized
+			}
+			randomized, err = common.RandDateAroundAsString(delaiDateFormat, row[5])
+			if err != nil {
+				output[5] = row[5]
+			} else {
+				output[5] = randomized
+			}
 			output[6] = row[6]
 			output[7] = common.RandRaisonSociale(row[7])
 			output[8] = row[8]

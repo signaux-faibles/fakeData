@@ -33,6 +33,7 @@ func init() {
 	crc32q = crc32.MakeTable(0xD5828281)
 }
 
+// FalsifyNumber no collision when `len(input) >= 10`
 func FalsifyNumber(input string) (string, error) {
 	length := len(input)
 	checksum := crc32.Checksum([]byte(input), crc32q)
@@ -114,4 +115,14 @@ func RandDateAround(toChange time.Time) time.Time {
 		r = toChange.AddDate(0, 0, daysToChange)
 	}
 	return r
+}
+
+func RandDateAroundAsString(format string, toChange string) (string, error) {
+	parse, err := time.Parse(format, toChange)
+	if err != nil {
+		log.Default().Println("can't parse date from", toChange, "with format", format, ". Error is", err)
+		return "", err
+	}
+	randomized := RandDateAround(parse)
+	return randomized.Format(format), nil
 }

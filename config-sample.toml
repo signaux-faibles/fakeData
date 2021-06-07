@@ -5,6 +5,10 @@ comptes = "/path/to/file/Sigfaible_etablissement_utf8.csv"
 cotisations = "/path/to/file/Sigfaible_cotisdues.csv"
 debits = "/path/to/file/Sigfaible_debits.csv"
 delais = "/path/to/file/Sigfaible_delais.csv"
+ccsf = "/path/to/file/Sigfaible_ccsf.csv"
+effectifSiren = "/path/to/file/Sigfaible_effectif_siren.csv"
+effectifSiret = "/path/to/file/Sigfaible_effectif_siret.csv"
+pcoll = "/path/to/file/Sigfaible_pcoll.csv"
 
 [output]
 prefix = "gen-"

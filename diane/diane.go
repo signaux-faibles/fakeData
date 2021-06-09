@@ -123,6 +123,7 @@ func randomizeDiane(siren string, input []string) []string {
 			}
 			output = append(output, newValue)
 		default:
+
 			log.Fatal("forgotten column", i, "has value", value, " (siren", siren, ')')
 		}
 	}

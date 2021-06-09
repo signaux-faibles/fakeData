@@ -185,7 +185,10 @@ func Test_RandNumber(t *testing.T) {
 		args args
 		want string
 	}{
-		{"test with negative float", args{"-123,45"}, "`-\\d{2,3}\\d{2}`"},
+		{"test with negative float", args{"-123,45"}, `-\d{2,3},\d{2}`},
+		{"test with negative int", args{"-123"}, `-\d{2,3}`},
+		{"test with positive float", args{"123,45"}, `\d{2,3}`},
+		{"test with positive int", args{"123"}, `\d{2,3}`},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -198,7 +201,7 @@ func Test_RandNumber(t *testing.T) {
 				func() bool {
 					return matcher.MatchString(got)
 				},
-				fmt.Sprintf("randDateAround(%v) = %v, should be before %v", tt.args, got, tt.want))
+				fmt.Sprintf("RandNumber(%v) = %v, should match %v", tt.args, got, tt.want))
 		})
 	}
 }

@@ -18,6 +18,8 @@ func Test_selectOnlyDigits(t *testing.T) {
 		{"with 3 after comma", args{"520,478"}, "520,478"},
 		{"with dot", args{"520.478"}, "520.478"},
 		{"with blank", args{"52 047"}, "52047"},
+		{"with negative int", args{"-52 047"}, "-52047"},
+		{"with negative float", args{"-52,047"}, "-52,047"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

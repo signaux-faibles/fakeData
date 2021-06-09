@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/golang-collections/collections/set"
 	"github.com/stretchr/testify/assert"
+	"regexp"
 	"testing"
 	"time"
 )
@@ -153,7 +154,7 @@ func Test_randDateAround_withClosure(t *testing.T) {
 	}
 }
 
-func Test_RandDateAroundAsString(t *testing.T) {
+func Test_RandDate(t *testing.T) {
 	type args struct {
 		value  string
 		layout string
@@ -171,6 +172,33 @@ func Test_RandDateAroundAsString(t *testing.T) {
 			assert.Nil(t, err, "error when parsing %s with layout as %s", tt.args.value, tt.args.layout)
 			parsed, err := time.Parse(tt.args.layout, result)
 			assert.Nil(t, err, "error when parsing result %s with layout as %s", parsed, tt.args.layout)
+		})
+	}
+}
+
+func Test_RandNumber(t *testing.T) {
+	type args struct {
+		input string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{"test with negative float", args{"-123,45"}, "`-\\d{2,3}\\d{2}`"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			matcher := regexp.MustCompile(tt.want)
+			got, err := RandNumber(tt.args.input)
+			if err != nil {
+				t.Errorf("error when RandNumber(%v) -> err is %v", tt.args.input, err)
+			}
+			assert.Condition(t,
+				func() bool {
+					return matcher.MatchString(got)
+				},
+				fmt.Sprintf("randDateAround(%v) = %v, should be before %v", tt.args, got, tt.want))
 		})
 	}
 }

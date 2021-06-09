@@ -10,24 +10,8 @@ import (
 var onlyNumbersDotAndComma *regexp.Regexp
 
 func init() {
-	onlyNumbersDotAndComma = regexp.MustCompile(`\d+[.,]?\d+`)
+	onlyNumbersDotAndComma = regexp.MustCompile(`-?\d+[.,]?\d+`)
 }
-
-//func RandDecimal(input string) (string, error) {
-//	toFloat := strings.Join(onlyNumbersDotAndComma.FindAllString(input, -1), "")
-//	if len(toFloat) == 0 {
-//		return "", nil
-//	}
-//	val, err := strconv.ParseFloat(toFloat, 64)
-//	if err != nil {
-//		return input, err
-//	}
-//	around := RandFloatAround(val)
-//	if around == 0 {
-//		return "", nil
-//	}
-//	return fmt.Sprintf("%f", around), nil
-//}
 
 func selectOnlyDigits(input string) string {
 	digits := strings.Join(onlyNumbersDotAndComma.FindAllString(input, -1), "")

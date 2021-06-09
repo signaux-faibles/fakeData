@@ -117,6 +117,17 @@ func RandInt(input string) (string, error) {
 	return strconv.Itoa(around), nil
 }
 
+func RandNumber(input string) (string, error) {
+	toNumber := selectOnlyDigits(input)
+	if len(toNumber) == 0 {
+		return "", nil
+	}
+	if strings.Contains(toNumber, ",") {
+		return RandDecimal(input)
+	}
+	return RandInt(input)
+}
+
 func RandItemFrom(datas []string) string {
 	size := len(datas)
 	if size > 0 {

@@ -7,18 +7,14 @@ import (
 	"log"
 	"math"
 	"math/rand"
-	"regexp"
 	"strconv"
 	"strings"
 	"time"
 )
 
-var onlyDigitCharacter *regexp.Regexp
-
 var crc32q *crc32.Table
 
 func init() {
-	onlyDigitCharacter = regexp.MustCompile(`\w`)
 	// In this package, the CRC polynomial is represented in reversed notation,
 	// or LSB-first representation.
 	//
@@ -73,16 +69,27 @@ func RandCoeff() float64 {
 		if coeff > min && coeff < max {
 			return coeff
 		}
-
 	}
 }
 
-func RandAround(input int) int {
-	return int(float64(input) * RandCoeff())
+func RandDecimal(input string) (string, error) {
+	digits := selectOnlyDigits(input)
+	if len(digits) == 0 {
+		return "", nil
+	}
+	val, err := parseFloat(digits)
+	if err != nil {
+		return input, err
+	}
+	around := val * RandCoeff()
+	//if around == 0 {
+	//	return "", nil
+	//}
+	return floatToStringWith2Digits(around), nil
 }
 
-func RandEffectif(input string) (string, error) {
-	toInt := strings.Join(onlyDigitCharacter.FindAllString(input, -1), "")
+func RandIntAround(input string) (string, error) {
+	toInt := selectOnlyDigits(input)
 	if len(toInt) == 0 {
 		return "", nil
 	}
@@ -90,10 +97,10 @@ func RandEffectif(input string) (string, error) {
 	if err != nil {
 		return input, err
 	}
-	around := RandAround(val)
-	if around == 0 {
-		return "", nil
-	}
+	around := int(float64(val) * RandCoeff())
+	//if around == 0 {
+	//	return "", nil
+	//}
 	return strconv.Itoa(around), nil
 }
 
@@ -107,10 +114,23 @@ func RandItemFrom(datas []string) string {
 	return ""
 }
 
-func RandDateAround(toChange time.Time) time.Time {
+func randDateAround(toChange time.Time) time.Time {
 	var today = time.Now()
-	var r = today
-	for r.After(today) || r.Equal(today) {
+	if toChange.After(today) {
+		return changeDate(toChange)
+	}
+	return changeDateButLimited(toChange, today)
+}
+
+func changeDate(toChange time.Time) time.Time {
+	daysToChange := randomdata.Number(-19, 19)
+	r := toChange.AddDate(0, 0, daysToChange)
+	return r
+}
+
+func changeDateButLimited(toChange time.Time, limit time.Time) time.Time {
+	r := limit
+	for !r.Before(limit) {
 		daysToChange := randomdata.Number(-19, 19)
 		r = toChange.AddDate(0, 0, daysToChange)
 	}
@@ -118,11 +138,14 @@ func RandDateAround(toChange time.Time) time.Time {
 }
 
 func RandDateAroundAsString(format string, toChange string) (string, error) {
+	if len(toChange) == 0 {
+		return toChange, nil
+	}
 	parse, err := time.Parse(format, toChange)
 	if err != nil {
 		log.Default().Println("can't parse date from", toChange, "with format", format, ". Error is", err)
 		return "", err
 	}
-	randomized := RandDateAround(parse)
+	randomized := randDateAround(parse)
 	return randomized.Format(format), nil
 }

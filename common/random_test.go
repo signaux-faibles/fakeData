@@ -13,7 +13,7 @@ func Test_RandEffectif(t *testing.T) {
 	var actual string
 	var err error
 	input = "52�047"
-	actual, err = RandEffectif(input)
+	actual, err = RandIntAround(input)
 	if len(actual) == 5 && err == nil {
 		t.Logf("[OK] randomize effectif %s has correct size, and is %s", input, actual)
 	} else {
@@ -21,7 +21,7 @@ func Test_RandEffectif(t *testing.T) {
 	}
 
 	input = "52 047"
-	actual, err = RandEffectif(input)
+	actual, err = RandIntAround(input)
 	if len(actual) == 5 && err == nil {
 		t.Logf("[OK] randomize effectif %s has correct size, and is %s", input, actual)
 	} else {
@@ -29,7 +29,7 @@ func Test_RandEffectif(t *testing.T) {
 	}
 
 	input = "toto va 17 fois à la plage"
-	actual, err = RandEffectif(input)
+	actual, err = RandIntAround(input)
 	if input == actual && err != nil {
 		t.Logf("[OK] effectif '%s' has non digit chars, so there's no randomization -> '%s', error is %s", input, actual, err)
 	} else {
@@ -37,7 +37,7 @@ func Test_RandEffectif(t *testing.T) {
 	}
 
 	input = ""
-	actual, err = RandEffectif(input)
+	actual, err = RandIntAround(input)
 	if len(actual) == 0 && err == nil {
 		t.Logf("[OK] randomize effectif '%s' is empty", input)
 	} else {
@@ -81,7 +81,7 @@ func Test_FalsifyNumber(t *testing.T) {
 	}
 }
 
-func Test_RandDateAround(t *testing.T) {
+func Test_randDateAround(t *testing.T) {
 	now := time.Now()
 	type args struct {
 		input time.Time
@@ -98,14 +98,35 @@ func Test_RandDateAround(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := RandDateAround(tt.args.input); !got.Before(tt.want) {
-				t.Errorf("RandDateAround(%v) = %v, should be before %v", tt.args, got, tt.want)
+			if got := randDateAround(tt.args.input); !got.Before(tt.want) {
+				t.Errorf("randDateAround(%v) = %v, should be before %v", tt.args, got, tt.want)
 			}
 		})
 	}
 }
 
-func Test_RandDateAround_withClosure(t *testing.T) {
+func Test_randDateAround_inFuture(t *testing.T) {
+	now := time.Now()
+	type args struct {
+		input time.Time
+	}
+	tests := []struct {
+		name string
+		args args
+		want time.Time
+	}{
+		{"test in one year", args{now.AddDate(1, 0, 0)}, now},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := randDateAround(tt.args.input); !got.After(tt.want) {
+				t.Errorf("randDateAround(%v) = %v, should be before %v", tt.args, got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_randDateAround_withClosure(t *testing.T) {
 	now := time.Now()
 	type args struct {
 		input time.Time
@@ -122,7 +143,7 @@ func Test_RandDateAround_withClosure(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := RandDateAround(tt.args.input)
+			got := randDateAround(tt.args.input)
 			assert.Condition(t,
 				func() bool {
 					return got.Before(tt.want)
@@ -142,6 +163,7 @@ func Test_RandDateAroundAsString(t *testing.T) {
 		args args
 	}{
 		{"pcoll format", args{"22MAR2021", "02Jan2006"}},
+		{"empty date", args{"", ""}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -150,11 +172,5 @@ func Test_RandDateAroundAsString(t *testing.T) {
 			parsed, err := time.Parse(tt.args.layout, result)
 			assert.Nil(t, err, "error when parsing result %s with layout as %s", parsed, tt.args.layout)
 		})
-	}
-}
-
-func less(first time.Time, second time.Time) assert.Comparison {
-	return func() bool {
-		return first.Before(second)
 	}
 }

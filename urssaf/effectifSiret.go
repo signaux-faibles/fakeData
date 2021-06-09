@@ -99,10 +99,9 @@ func randomizeEffectifSiretLine(compte string, siret string, input []string) []s
 		case len(input) - 1:
 			output = append(output, input[len(input)-1])
 		default:
-			newEffectif, _ := common.RandEffectif(value)
+			newEffectif, _ := common.RandIntAround(value)
 			output = append(output, newEffectif)
 		}
-
 	}
 	return output
 }

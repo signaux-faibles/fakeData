@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/signaux-faibles/fakeData/diane"
 	"github.com/signaux-faibles/fakeData/urssaf"
 	"log"
 	"math/rand"
@@ -69,8 +70,9 @@ func main() {
 		"effectifSiren": urssaf.ReadAndRandomEffectifSiren,
 		"effectifSiret": urssaf.ReadAndRandomEffectifSiret,
 		"pcoll":         urssaf.ReadAndRandomPcoll,
+		"diane":         diane.ReadAndRandomDiane,
 	}
-	order := []string{"cotisations", "debits", "delais", "ccsf", "effectifSiren", "effectifSiret", "pcoll"}
+	order := []string{"cotisations", "debits", "delais", "ccsf", "effectifSiren", "effectifSiret", "pcoll", "diane"}
 
 	for _, k := range order {
 		err := run(k, randomizers[k], mapping)

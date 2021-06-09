@@ -72,6 +72,19 @@ func RandCoeff() float64 {
 	}
 }
 
+func RandDate(format string, toChange string) (string, error) {
+	if len(toChange) == 0 {
+		return toChange, nil
+	}
+	parse, err := time.Parse(format, toChange)
+	if err != nil {
+		log.Default().Println("can't parse date from", toChange, "with format", format, ". Error is", err)
+		return "", err
+	}
+	randomized := randDateAround(parse)
+	return randomized.Format(format), nil
+}
+
 func RandDecimal(input string) (string, error) {
 	digits := selectOnlyDigits(input)
 	if len(digits) == 0 {
@@ -88,7 +101,7 @@ func RandDecimal(input string) (string, error) {
 	return floatToStringWith2Digits(around), nil
 }
 
-func RandIntAround(input string) (string, error) {
+func RandInt(input string) (string, error) {
 	toInt := selectOnlyDigits(input)
 	if len(toInt) == 0 {
 		return "", nil
@@ -135,17 +148,4 @@ func changeDateButLimited(toChange time.Time, limit time.Time) time.Time {
 		r = toChange.AddDate(0, 0, daysToChange)
 	}
 	return r
-}
-
-func RandDateAroundAsString(format string, toChange string) (string, error) {
-	if len(toChange) == 0 {
-		return toChange, nil
-	}
-	parse, err := time.Parse(format, toChange)
-	if err != nil {
-		log.Default().Println("can't parse date from", toChange, "with format", format, ". Error is", err)
-		return "", err
-	}
-	randomized := randDateAround(parse)
-	return randomized.Format(format), nil
 }

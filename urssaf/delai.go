@@ -77,13 +77,13 @@ func ReadAndRandomDelais(source string, outputFileName string, outputSize int, m
 			output[1] = row[1]
 			output[2] = k
 			output[3] = "aSiren-" + strconv.Itoa(rand.Int())
-			randomized, err := common.RandDateAroundAsString(delaiDateFormat, row[4])
+			randomized, err := common.RandDate(delaiDateFormat, row[4])
 			if err != nil {
 				output[4] = row[4]
 			} else {
 				output[4] = randomized
 			}
-			randomized, err = common.RandDateAroundAsString(delaiDateFormat, row[5])
+			randomized, err = common.RandDate(delaiDateFormat, row[5])
 			if err != nil {
 				output[5] = row[5]
 			} else {

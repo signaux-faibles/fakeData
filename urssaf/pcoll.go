@@ -94,7 +94,7 @@ func randomizePColl(siret string, siren string, input []string) []string {
 	output[0] = siret
 	output[1] = siren
 
-	randomized, err := common.RandDateAroundAsString(pcollDateFormat, input[2])
+	randomized, err := common.RandDate(pcollDateFormat, input[2])
 	if err != nil {
 		output[2] = input[2]
 	} else {

@@ -13,7 +13,7 @@ func Test_RandEffectif(t *testing.T) {
 	var actual string
 	var err error
 	input = "52�047"
-	actual, err = RandIntAround(input)
+	actual, err = RandInt(input)
 	if len(actual) == 5 && err == nil {
 		t.Logf("[OK] randomize effectif %s has correct size, and is %s", input, actual)
 	} else {
@@ -21,7 +21,7 @@ func Test_RandEffectif(t *testing.T) {
 	}
 
 	input = "52 047"
-	actual, err = RandIntAround(input)
+	actual, err = RandInt(input)
 	if len(actual) == 5 && err == nil {
 		t.Logf("[OK] randomize effectif %s has correct size, and is %s", input, actual)
 	} else {
@@ -29,7 +29,7 @@ func Test_RandEffectif(t *testing.T) {
 	}
 
 	input = "toto va 17 fois à la plage"
-	actual, err = RandIntAround(input)
+	actual, err = RandInt(input)
 	if input == actual && err != nil {
 		t.Logf("[OK] effectif '%s' has non digit chars, so there's no randomization -> '%s', error is %s", input, actual, err)
 	} else {
@@ -37,7 +37,7 @@ func Test_RandEffectif(t *testing.T) {
 	}
 
 	input = ""
-	actual, err = RandIntAround(input)
+	actual, err = RandInt(input)
 	if len(actual) == 0 && err == nil {
 		t.Logf("[OK] randomize effectif '%s' is empty", input)
 	} else {
@@ -167,7 +167,7 @@ func Test_RandDateAroundAsString(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result, err := RandDateAroundAsString(tt.args.layout, tt.args.value)
+			result, err := RandDate(tt.args.layout, tt.args.value)
 			assert.Nil(t, err, "error when parsing %s with layout as %s", tt.args.value, tt.args.layout)
 			parsed, err := time.Parse(tt.args.layout, result)
 			assert.Nil(t, err, "error when parsing result %s with layout as %s", parsed, tt.args.layout)

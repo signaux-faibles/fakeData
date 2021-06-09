@@ -83,7 +83,7 @@ func randomizeEffectifLine(key string, input []string) []string {
 		if i == 0 {
 			continue
 		}
-		newEffectif, _ := common.RandIntAround(effectif)
+		newEffectif, _ := common.RandInt(effectif)
 		output = append(output, newEffectif)
 	}
 	// randomize RAISON SOCIALE

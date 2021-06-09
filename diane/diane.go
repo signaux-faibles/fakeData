@@ -106,10 +106,10 @@ func randomizeDiane(siren string, input []string) []string {
 		case 3, 4, 14, 15, 35: // statut juridique, procédure collective, nombre de mois
 			output = append(output, value)
 		case 5, 6, 7, 8, 9, 10, 11, 24, 25, 26, 27, 30, 34, 38, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81:
-			newValue, _ := common.RandIntAround(value)
+			newValue, _ := common.RandInt(value)
 			output = append(output, newValue)
 		case 12, 13:
-			newDate, err := common.RandDateAroundAsString("02/01/2006", value)
+			newDate, err := common.RandDate("02/01/2006", value)
 			if err != nil {
 				log.Default().Println("Error when randomize", value, "(Siren is", siren, ") Set old value.", "Error is", err)
 				output = append(output, value)

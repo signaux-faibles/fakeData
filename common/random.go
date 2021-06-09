@@ -78,7 +78,6 @@ func RandDate(format string, toChange string) (string, error) {
 	}
 	parse, err := time.Parse(format, toChange)
 	if err != nil {
-		log.Default().Println("can't parse date from", toChange, "with format", format, ". Error is", err)
 		return "", err
 	}
 	randomized := randDateAround(parse)

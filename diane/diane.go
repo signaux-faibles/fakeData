@@ -105,9 +105,9 @@ func randomizeDiane(siren string, input []string) []string {
 			output = append(output, siren)
 		case 3, 4, 14, 15, 35: // statut juridique, procédure collective, nombre de mois
 			output = append(output, value)
-		case 5, 6, 7, 8, 9, 10, 11, 24, 25, 26, 27, 30, 34, 38, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81:
-			newValue, _ := common.RandInt(value)
-			output = append(output, newValue)
+		//case 5, 6, 7, 8, 9, 10, 11, 24, 25, 26, 27, 30, 34, 38, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81:
+		//	newValue, _ := common.RandInt(value)
+		//	output = append(output, newValue)
 		case 12, 13:
 			newDate, err := common.RandDate("02/01/2006", value)
 			if err != nil {
@@ -115,16 +115,21 @@ func randomizeDiane(siren string, input []string) []string {
 				output = append(output, value)
 			}
 			output = append(output, newDate)
-		case 16, 17, 18, 19, 20, 21, 22, 23, 28, 29, 31, 32, 33, 36, 37, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54:
-			newValue, err := common.RandDecimal(value)
+		//case 16, 17, 18, 19, 20, 21, 22, 23, 28, 29, 31, 32, 33, 36, 37, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54:
+		//	newValue, err := common.RandDecimal(value)
+		//	if err != nil {
+		//		log.Default().Println("Error when randomize", value, "(Siren is", siren, ") Set old value", "Error is", err)
+		//		output = append(output, value)
+		//	}
+		//	output = append(output, newValue)
+		default:
+			newValue, err := common.RandNumber(value)
 			if err != nil {
 				log.Default().Println("Error when randomize", value, "(Siren is", siren, ") Set old value", "Error is", err)
 				output = append(output, value)
 			}
 			output = append(output, newValue)
-		default:
 
-			log.Fatal("forgotten column", i, "has value", value, " (siren", siren, ')')
 		}
 	}
 	return output

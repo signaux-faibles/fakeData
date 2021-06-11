@@ -15,25 +15,23 @@ import (
 	"github.com/TomOnTime/utfutil"
 )
 
-var utf16le = unicode.UTF16(unicode.LittleEndian, unicode.UseBOM).NewDecoder()
-
 func ReadAndRandomDiane(source string, outputFileName string, outputSize int, mapping map[string]string) error {
 	// source
 	sourceFile, err := utfutil.OpenFile(source, utfutil.UTF16LE)
 	if err != nil {
 		return err
 	}
-	defer sourceFile.Close()
-
-	//buffer := bufio.NewReader(sourceFile)
-	//err = dealingWithUTF16LEBom(buffer)
-	if err != nil {
-		return err
-	}
+	defer func(file utfutil.UTFReadCloser) {
+		err := sourceFile.Close()
+		if err != nil {
+			log.Fatalln("error when closing", file)
+		}
+	}(sourceFile)
 	reader := csv.NewReader(sourceFile)
 	reader.Comma = ';'
 
 	// destination
+	encoder := unicode.UTF16(unicode.LittleEndian, unicode.UseBOM).NewEncoder()
 	outputFile, err := os.OpenFile(outputFileName, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0660)
 	if err != nil {
 		return err
@@ -45,16 +43,17 @@ func ReadAndRandomDiane(source string, outputFileName string, outputSize int, ma
 			log.Fatalln("error when closing", file)
 		}
 	}(outputFile)
-	writer := csv.NewWriter(outputFile)
-	writer.Comma = reader.Comma
-	defer writer.Flush()
+	//writer := csv.NewWriter(outputFile)
+	//writer.Comma = reader.Comma
+	//defer writer.Flush()
 
 	// ligne de titre
 	row, err := reader.Read()
 	if err != nil {
 		return errors.Wrap(err, "Error reading header row")
 	}
-	err = writer.Write(row)
+	cvsRow := common.EncodeToCsv(row, reader.Comma, encoder)
+	_, err = outputFile.WriteString(cvsRow)
 	if err != nil {
 		return err
 	}
@@ -74,7 +73,8 @@ func ReadAndRandomDiane(source string, outputFileName string, outputSize int, ma
 
 			output := randomizeDiane(newSiren, row)
 
-			err = writer.Write(output[0:])
+			cvsRow := common.EncodeToCsv(output, reader.Comma, encoder)
+			_, err = outputFile.WriteString(cvsRow)
 			if err != nil {
 				return err
 			}
@@ -129,7 +129,6 @@ func randomizeDiane(siren string, input []string) []string {
 				output = append(output, value)
 			}
 			output = append(output, newValue)
-
 		}
 	}
 	return output
